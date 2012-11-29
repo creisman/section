@@ -7,7 +7,8 @@ import argparse
 import sys
 
 from algorithms import sort_fns
-from algorithms import url_validation_fns
+from validation import url_validation_fns
+from validation.canonicalizer import canonicalize
 
 def main():
   parser = argparse.ArgumentParser(description='Simple sort program')
@@ -88,7 +89,7 @@ def _validate(url_list, url_validation_fn):
   """Returns a validated copy of URLs list"""
   validated_url = list(url_list)
   
-  url_validation_fn(validated_url)
+  validated_url = url_validation_fn(validated_url)
   
   ## See url_validation.py for adding implementations for
   ## various validation functions
@@ -101,6 +102,21 @@ def _sort(str_list, sort_fn):
   sort_fn(copy)
 
   return copy
+
+# Define equals to be equality of the canonical form.
+# Only defined for valid URLs.
+def _equals(url1, url2):
+  return canonicalize(url1) == canonicalize(url2)
+
+# Define less than to be less than of the canonical form.
+# Only defined for valid URLs.
+def _less(url1, url2):
+  return canonicalize(url1) < canonicalize(url2)
+
+# Define greater than to be greater than of the canonical form.
+# Only defined for valid URLs.
+def _greater(url1, url2):
+  return canonicalize(url1) > canonicalize(url2)
 
 if __name__ == '__main__':
   main()
